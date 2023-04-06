@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'smarty_address'
+puts SmartyAddress.hi(ARGV[0])
