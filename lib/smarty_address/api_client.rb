@@ -9,34 +9,17 @@ module SmartyAddress
     AUTH_TOKEN = ENV.fetch("SMARTY_AUTH_TOKEN", nil)
 
     class << self
-      def find_candidates_for_addresses(raw_addresses)
-        addresses = Array(raw_addresses)
-        batch = SmartyStreets::Batch.new
-
-        addresses.each do |addr|
-          batch.add address_lookup(addr)
-        end
+      def find_candidates_for_addresses(addresses)
+        batch = build_batch addresses
 
         begin
           client.send_batch(batch)
         rescue SmartyStreets::SmartyError => e
           puts e
-          return
+          return {}
         end
 
-        batch.each_with_object({}) do |_results, _memo|
-          candidate = lookup.result.first
-          memo[lookup.input_id] = if candidate.nil?
-                                    "Invalid Address"
-                                  else
-                                    components = candidate.components
-                                    [
-                                      candidate.delivery_line_1,
-                                      candidate.city,
-                                      "#{components.zipcode}-#{components.plus4_code}"
-                                    ].join(", ")
-                                  end
-        end
+        build_batch_results_map batch
       end
 
       private
@@ -49,9 +32,8 @@ module SmartyAddress
         @credentials ||= SmartyStreets::StaticCredentials.new(AUTH_ID, AUTH_TOKEN)
       end
 
-      def address_lookup(address) # rubocop:disable Metrics/MethodLength
-        street, city, zipcode, * = address.split ","
-
+      def build_lookup(address) # rubocop:disable Metrics/MethodLength
+        street, city, zipcode, * = address.split(",").map(&:strip)
         SmartyStreets::USStreet::Lookup.new(
           street.strip, # street1
           nil, # street2
@@ -66,6 +48,22 @@ module SmartyAddress
           nil, # candidates
           address # input_id
         )
+      end
+
+      def build_batch_results_map(batch)
+        batch.each_with_object({}) do |lookup, memo|
+          memo[lookup.input_id] = lookup.result.first
+        end
+      end
+
+      def build_batch(addresses)
+        batch = SmartyStreets::Batch.new
+
+        Array(addresses).each do |address|
+          batch.add build_lookup(address)
+        end
+
+        batch
       end
     end
   end

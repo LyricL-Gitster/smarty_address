@@ -1,30 +1,22 @@
 # frozen_string_literal: true
 
-require "smartystreets_ruby_sdk"
-
 module SmartyAddress
   # Handle writing output
   class Writer
     class << self
       def print_address_candidate_result(address, candidate)
-        print "#{address} -> "
-
-        if candidate.nil?
-          puts "Invalid Address"
-          return
-        end
-
-        puts address_from_candidate(candidate)
+        puts "#{address} -> #{build_address_string(candidate)}"
       end
 
       private
 
-      def address_from_candidate(candidate)
-        components = candidate.components
+      def build_address_string(candidate)
+        return "Invalid Address" if candidate.nil?
 
+        components = candidate.components
         [
           candidate.delivery_line_1,
-          candidate.city,
+          components.city_name,
           "#{components.zipcode}-#{components.plus4_code}"
         ].join(", ")
       end

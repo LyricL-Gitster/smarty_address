@@ -26,14 +26,13 @@ Gem::Specification.new do |spec|
       (f == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|circleci)|appveyor)})
     end
   end
-  spec.bindir = "exe"
+  spec.bindir = "bin"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.executables << "smarty_address"
   spec.require_paths = ["lib"]
 
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "dotenv-rails", "~> 2.8.1"
-  spec.add_dependency "optparse", "~> 0.3.1"
   spec.add_dependency "smartystreets_ruby_sdk", "~> 5.14.19"
 
   # For more information and examples about making a new gem, check out our

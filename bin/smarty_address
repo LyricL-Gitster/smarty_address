@@ -2,27 +2,5 @@
 # frozen_string_literal: true
 
 require "smarty_address"
-require "optparse"
 
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: example.rb [options]"
-
-  opts.on("-v", "--version", "See current version") do |v|
-    options[:version] = v
-  end
-end.parse!
-
-filename = ARGV[0]
-
-if !options[:version].nil?
-  puts "Smarty Address v#{SmartyAddress::VERSION}"
-elsif filename.nil?
-  puts "Enter formatted addresses"
-  data = gets # either read piped data or next input
-  print "\r\e[A\e[J" # clear previous line of text from STDOUT
-  SmartyAddress.print_formatted_addresses(data)
-else
-  data = SmartyAddress.parse_csv filename
-  SmartyAddress.print_formatted_addresses(data)
-end
+SmartyAddress.execute
