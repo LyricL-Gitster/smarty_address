@@ -9,7 +9,7 @@ module SmartyAddress
     AUTH_TOKEN = ENV.fetch("SMARTY_AUTH_TOKEN", nil)
 
     class << self
-      def find_candidates_for_addresses(addresses)
+      def find_address_candidates(addresses)
         batch = build_batch addresses
 
         begin
@@ -35,12 +35,12 @@ module SmartyAddress
       def build_lookup(address) # rubocop:disable Metrics/MethodLength
         street, city, zipcode, * = address.split(",").map(&:strip)
         SmartyStreets::USStreet::Lookup.new(
-          street.strip, # street1
+          street,
           nil, # street2
           nil, # secondary
-          city.strip,
+          city,
           nil, # state
-          zipcode.strip,
+          zipcode,
           nil, # lastline
           nil, # addressee
           nil, # urbanization

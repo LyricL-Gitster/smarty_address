@@ -29,7 +29,7 @@ module SmartyAddress
     end
 
     def find_and_print_formatted_addresses(raw_addresses)
-      address_candidate_map = ApiClient.find_candidates_for_addresses raw_addresses
+      address_candidate_map = ApiClient.find_address_candidates raw_addresses
       address_candidate_map.each do |address, candidate|
         Writer.print_address_candidate_result(address, candidate)
       end
